@@ -1,5 +1,6 @@
-with open("i.4") as f: s = map(int,f.read().split('-'))
-s[1]+=1
+import aoc
+s = aoc.sread('i.4', int, '-')
+s[1]+=1 #necessary for range()
 
 def prange(mi, ma, e): #limited, non-descending range()
     return e and reduce(lambda a, b: a+b,

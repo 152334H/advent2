@@ -1,4 +1,5 @@
-with open('i.2') as f: o=map(int,f.read().split(','))
+import aoc
+o = aoc.sread('i.2', int, ',')
 for n in range(100): #small enough to bruteforce
 	for v in range(100):
 		i = 0

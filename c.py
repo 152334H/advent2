@@ -1,5 +1,6 @@
 from collections import defaultdict as dd
-with open("i.3") as f: s = map(lambda s: map(lambda m: (int(m[1:])*(lambda c: -1 if c in "DL" else 1)(m[0]), m[0]), s.split(',')), f.read().split('\n')[:-1])
+import aoc
+s = [map(lambda m: (int(m[1:])*(lambda c: -1 if c in "DL" else 1)(m[0]), m[0]), l) for l in aoc.sreadlines('i.3', div=',')]
 inv={'x':'y', 'y':'x'}
 
 lines = []

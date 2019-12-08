@@ -1,5 +1,6 @@
+import aoc
+s = aoc.sreadlines('i.1', int)
 def fuel(m): return m/3-2
-with open('i.1') as f: s=map(int,f.read().split('\n')[:-1])
 print sum(map(fuel,s))
 a2 = 0
 for i in s:

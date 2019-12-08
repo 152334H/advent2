@@ -1,6 +1,6 @@
 import itertools as it
-import e    #e.py; day 5 code
-with open('i.7') as f: s=map(int,f.read().split(','))
+import e, aoc   #e.py; day 5 code
+s = aoc.sread('i.7', int, ',')
 for r in (range(5), range(5,10)):   #both parts' code will terminate correctly
     final = []
     for t in it.permutations(r):

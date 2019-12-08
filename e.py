@@ -39,7 +39,8 @@ def phaseinit(s, v):
     return r, r.send(v)
 
 if __name__ == "__main__":
-    with open('i.5') as f: s=map(int,f.read().split(','))
+    import aoc
+    s = aoc.sread('i.5', int, ',')
     r = phaseinit(s, 1)[0]
     for rtr in r: pass  #seek to end of generator
     print rtr   #print last value
