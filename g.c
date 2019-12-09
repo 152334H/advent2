@@ -2,7 +2,7 @@
 #include <stdint.h>
 #define	CODEMAX 1024
 #include "intcode.h"
-int64_t intcode[CODEMAX], max = 0, ans = 0;
+__int128_t intcode[CODEMAX], max = 0, ans = 0;
 void swap(uint8_t *a, uint8_t *b){
 	uint8_t t = *a;
 	*a = *b;
@@ -29,6 +29,7 @@ void run5(uint8_t *arr){
 			else	cont = 0;
 	while (cont); //this assumes that rtr is always increasing per cycle
 	if (rtr > ans) ans = rtr;
+	for (uint8_t i = 0; i < 5; i++) kill(in[i]);
 }
 int main(){
 	FILE *f = fopen("i.7", "r");

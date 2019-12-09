@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "intcode.h"
 const int8_t SIZE[] = {-1,3,3,1,1,2,2,3,3,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-Opcode instr(int64_t n) {
+Opcode instr(uint32_t n) { // n < 100000
 	Opcode rtr;
 	rtr.op = n%100;
 	n /= 100;
@@ -15,13 +15,13 @@ Opcode instr(int64_t n) {
 	return rtr;
 }
 void exec(Intcode *in) {
-	int32_t rb = 0;
+	int32_t rb = 0; //rb same size as i
 	while (in->s[in->i] != 99){
 		Opcode code = instr(in->s[in->i]);
 		//printf("code (");
 		//for (int8_t j = 0; j < 4; j++) printf("%lld, ", in->s[in->i+j]);
 		//printf(") op: %lld, modes: ",  code.op);
-		int64_t p[4];
+		__int128_t p[4];
 		for (uint8_t j = 0; j < SIZE[code.op]; j++)
 			p[j] = code.md[j] ? (code.md[j] == 2 ? in->s[in->i+j+1]+rb : in->i+j+1) : in->s[in->i+j+1];
 		//for (int8_t j = 0; j < SIZE[code.op]; j++) printf("%lld:%lld, ", code.md[j], p[j]);
@@ -66,7 +66,7 @@ void exec(Intcode *in) {
 	in->run = 0;
 	return;
 }
-_Bool input(Intcode* in, int64_t v){
+_Bool input(Intcode* in, __int128_t v){
 	if (in->gotIn){
 		puts("ERR");
 		return 1;
@@ -75,27 +75,27 @@ _Bool input(Intcode* in, int64_t v){
 	in->in = v;
 	return 0;
 }
-int64_t get(Intcode* in){
+__int128_t get(Intcode* in){
 	if (!in->gotOut) return puts("ERRR");	//garbage
 	in->gotOut = 0;
 	return in->out;
 }
-int64_t push(Intcode* in, int64_t v){
+__int128_t push(Intcode* in, __int128_t v){
 	if (input(in,v)) return 0;	//garbage value
 	exec(in);
 	return get(in);
 }
-_Bool send(Intcode* in, int64_t v){
+_Bool send(Intcode* in, __int128_t v){
 	if (input(in,v)) return 1;	//garbage value
 	exec(in);
 }
-int64_t next(Intcode* in){
+__int128_t next(Intcode* in){
 	exec(in);
 	return get(in);
 }
-Intcode* runtime(int64_t *s, uint32_t len){
-	int64_t *cpy = malloc((len+1)*sizeof(int64_t));
-	memcpy(cpy, s, sizeof(int64_t)*len+1);
+Intcode* runtime(__int128_t *s, uint32_t len){
+	__int128_t *cpy = malloc((len+1)*sizeof(__int128_t));
+	memcpy(cpy, s, sizeof(__int128_t)*len+1);
 	s[len] = '\0'; //in case
 	Intcode *in = malloc(sizeof(Intcode));
 	in->s = cpy;
@@ -104,9 +104,10 @@ Intcode* runtime(int64_t *s, uint32_t len){
 	exec(in);
 	return in;
 }
-Intcode* phaseInit(int64_t *s, uint32_t len, int64_t v){
+Intcode* phaseInit(__int128_t *s, uint32_t len, __int128_t v){
 	Intcode *in = runtime(s, len);
 	send(in, v);
+	return in;
 }
 void kill(Intcode* in){
 	if (in->shouldFree) free(in->s);
