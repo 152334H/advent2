@@ -14,6 +14,7 @@ typedef struct Intcode {
 	__int128_t in;
 	__int128_t out;
 	int32_t i; //max index should be containable in a 32 bit int
+  int32_t rb;
 	_Bool gotIn;
 	_Bool gotOut;
 	_Bool run;

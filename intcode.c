@@ -15,7 +15,6 @@ Opcode instr(uint32_t n) { // n < 100000
 	return rtr;
 }
 void exec(Intcode *in) {
-	int32_t rb = 0; //rb same size as i
 	while (in->s[in->i] != 99){
 		Opcode code = instr(in->s[in->i]);
 		//printf("code (");
@@ -23,7 +22,7 @@ void exec(Intcode *in) {
 		//printf(") op: %lld, modes: ",  code.op);
 		__int128_t p[4];
 		for (uint8_t j = 0; j < SIZE[code.op]; j++)
-			p[j] = code.md[j] ? (code.md[j] == 2 ? in->s[in->i+j+1]+rb : in->i+j+1) : in->s[in->i+j+1];
+			p[j] = code.md[j] ? (code.md[j] == 2 ? in->s[in->i+j+1]+in->rb : in->i+j+1) : in->s[in->i+j+1];
 		//for (int8_t j = 0; j < SIZE[code.op]; j++) printf("%lld:%lld, ", code.md[j], p[j]);
 		//puts(")");
 		switch(code.op){
@@ -59,6 +58,8 @@ void exec(Intcode *in) {
 			case 8:
 				in->s[p[2]] = in->s[*p] == in->s[p[1]];
 				break;
+      case 9:
+        in->rb += s[*p];
 			default: printf("PANIC");
 		}
 		in->i += SIZE[code.op]+1;
@@ -99,7 +100,7 @@ Intcode* runtime(__int128_t *s, uint32_t len){
 	s[len] = '\0'; //in case
 	Intcode *in = malloc(sizeof(Intcode));
 	in->s = cpy;
-	in->i = in->in = in->out = in->gotIn = in->gotOut = 0;
+	in->i = in->in = in->out = in->gotIn = in->gotOut = in->rb = 0;
 	in->run = in->shouldFree = 1;
 	exec(in);
 	return in;
