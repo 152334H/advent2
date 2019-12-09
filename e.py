@@ -53,7 +53,6 @@ def phaseinit(s, v):
 if __name__ == "__main__":
     import aoc
     s = aoc.sread('i.5', int, ',')
-    r = phaseinit(s, 1)[0]
-    for rtr in r: pass  #seek to end of generator
+    for rtr in phaseinit(s, 1)[0]: pass  #seek to end of generator
     print rtr   #print last value
     print phaseinit(s, 5)[1]    #print sole value of input 5
