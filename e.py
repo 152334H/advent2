@@ -1,4 +1,5 @@
 import operator as O
+from collections import defaultdict as dd
 def instr(n):
     SIZE = {1:3, 2:3, 99:0, 3:1, 4:1, 5:2, 6:2, 7:3, 8:3, 9:1}
     op = n%100
@@ -39,7 +40,8 @@ def intcode(s):
         i+=len(md)+1
 
 def runtime(s):
-    r = intcode(s[:] + [0]*999999)   #deep copy to prevent s[] modification; [0]*999999 because of day 9
+    d = dd(lambda: 0, enumerate(s))
+    r = intcode(d)#s[:] + [0]*999999)   #deep copy to prevent s[] modification; [0]*999999 because of day 9
     v = r.next()    #initiates code execution
     if v: print "Warn: intcode initalisation returned %d" % v
     return r
