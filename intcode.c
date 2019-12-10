@@ -17,14 +17,18 @@ Opcode instr(uint32_t n) { // n < 100000
 void exec(Intcode *in) {
 	while (in->s[in->i] != 99){
 		Opcode code = instr(in->s[in->i]);
-		//printf("code (");
-		//for (int8_t j = 0; j < 4; j++) printf("%lld, ", in->s[in->i+j]);
-		//printf(") op: %lld, modes: ",  code.op);
 		__int128_t p[4];
 		for (uint8_t j = 0; j < SIZE[code.op]; j++)
 			p[j] = code.md[j] ? (code.md[j] == 2 ? in->s[in->i+j+1]+in->rb : in->i+j+1) : in->s[in->i+j+1];
-		//for (int8_t j = 0; j < SIZE[code.op]; j++) printf("%lld:%lld, ", code.md[j], p[j]);
-		//puts(")");
+		if (in->debug){
+			printf("[%d] code: ( ", in->i);
+			for (int8_t j = 0; j < 4; j++) printf("%lld, ", in->s[in->i+j]);
+			printf(") op: %lld, rb: %lld, modes: [",  code.op, in->rb);
+			printf("(%lld, %lld)", *code.md, *p); //ensure that array prints ',' exactly
+			for (int8_t j = 1; j < SIZE[code.op] && printf(", "); j++)
+				printf("(%lld, %lld)", code.md[j], p[j]);
+			printf("]\n");
+		}
 		switch(code.op){
 			case 1:
 				in->s[p[2]] = in->s[*p] + in->s[p[1]];
@@ -83,7 +87,7 @@ __int128_t get(Intcode* in){
 	return in->out;
 }
 __int128_t push(Intcode* in, __int128_t v){
-	if (input(in,v)) return 0;	//garbage value
+	if (input(in,v)) return 1<<63;	//garbage value
 	exec(in);
 	return get(in);
 }
@@ -95,14 +99,18 @@ __int128_t next(Intcode* in){
 	exec(in);
 	return get(in);
 }
+Intcode* instance(){
+	Intcode *in = malloc(sizeof(Intcode));
+	in->i = in->in = in->out = in->gotIn = in->gotOut = in->rb = in->debug = in->shouldFree = 0;
+	in->run = 1;
+	return in;
+}
 Intcode* runtime(__int128_t *s, uint32_t len){
 	__int128_t *cpy = malloc((len+1)*sizeof(__int128_t));
 	memcpy(cpy, s, sizeof(__int128_t)*len+1);
-	s[len] = '\0'; //in case
-	Intcode *in = malloc(sizeof(Intcode));
+	Intcode *in = instance();
 	in->s = cpy;
-	in->i = in->in = in->out = in->gotIn = in->gotOut = in->rb = 0;
-	in->run = in->shouldFree = 1;
+	in->shouldFree = 1;
 	exec(in);
 	return in;
 }

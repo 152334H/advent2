@@ -19,14 +19,17 @@ typedef struct Intcode {
 	_Bool gotOut;
 	_Bool run;
 	_Bool shouldFree;
+	_Bool debug;
 } Intcode;
 Opcode instr(uint32_t n);
-void exec(Intcode *in);
-void kill(Intcode* in);
-_Bool send(Intcode* in, __int128_t v);
-_Bool input(Intcode* in, __int128_t v);
-__int128_t get(Intcode* in);
+void exec(Intcode *in); //run Intcode until i/o request await
+void kill(Intcode* in);	//free()s *in, and also in->s iff in->shouldFree is true
+//_Bool functions will return 0 iff successful.
+_Bool send(Intcode* in, __int128_t v);	//input() && exec(in)
+_Bool input(Intcode* in, __int128_t v);	//modify in to have v queued as input value.
+__int128_t get(Intcode* in);	//
 __int128_t push(Intcode* in, __int128_t v);
 __int128_t next(Intcode* in);
+Intcode* instance(void);
 Intcode* runtime(__int128_t *s, uint32_t len);
 Intcode* phaseInit(__int128_t *s, uint32_t len, __int128_t v);
