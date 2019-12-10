@@ -58,8 +58,9 @@ void exec(Intcode *in) {
 			case 8:
 				in->s[p[2]] = in->s[*p] == in->s[p[1]];
 				break;
-      case 9:
-        in->rb += s[*p];
+			case 9:
+				in->rb += in->s[*p];
+				break;
 			default: printf("PANIC");
 		}
 		in->i += SIZE[code.op]+1;
