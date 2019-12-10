@@ -10,7 +10,7 @@ def instr(n):
         n /= 10
         modes += (mode,)
     return (op, modes)
-
+DEBUG = 0
 def intcode(s):
     rb = 0
     i = 0
@@ -18,6 +18,12 @@ def intcode(s):
         op, md = instr(s[i])
 	pargv = tuple([[s[i+j+1], i+j+1, s[i+j+1]+rb][md[j]] for j in range(len(md))])
 	argv = tuple([s[pargv[j]] for j in range(len(md))])
+	if DEBUG:
+		print "[%d] code: (" % i,
+		for j in range(4): print "%d," % s[i+j],
+		print ") op: %d," % op,
+		print "rb: %d," % rb,
+		print "modes: %r" % zip(md, pargv)
         if op == 1:
 	    s[pargv[2]] = sum(argv[:2])
         elif op == 2:
