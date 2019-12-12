@@ -11,10 +11,10 @@ while 1:
         ke = [sum(map(abs, l)) for l in vel]
         pe = [sum(map(abs, l)) for l in moons]
         print sum(map(lambda t: t[0]*t[1], zip(ke, pe)))
-    mcp, vcp = [l[:] for l in moons], [l[:] for l in vel]
+    mcp = [l[:] for l in moons]
     for a in range(len(moons)):
         for b in range(4):
-            if a == b: pass
+            if a == b: continue
             for ax in range(3):
                 if moons[a][ax] < moons[b][ax]:
                     vel[a][ax] += 1
