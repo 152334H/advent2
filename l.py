@@ -1,12 +1,16 @@
 import aoc, re
+from fractions import gcd
 s = aoc.sreadlines('i.12')
 moons = [map(int,re.findall(r"[-\d]+", l)) for l in s]
 vel = [[0 for _ in range(3)] for __ in range(4)]
-print moons
-for i in range(1000):
-    print i
-    for v in range(4):
-        print moons[v], vel[v]
+coincidences = [None, None, None]
+init = [l[:] for l in moons]
+i = 0
+while 1:
+    if i == 1000:
+        ke = [sum(map(abs, l)) for l in vel]
+        pe = [sum(map(abs, l)) for l in moons]
+        print sum(map(lambda t: t[0]*t[1], zip(ke, pe)))
     mcp, vcp = [l[:] for l in moons], [l[:] for l in vel]
     for a in range(len(moons)):
         for b in range(4):
@@ -18,10 +22,11 @@ for i in range(1000):
                     vel[a][ax] -= 1
         for ax in range(3): mcp[a][ax] += vel[a][ax]
     moons = mcp
-print i+1
-for v in range(4):
-    print moons[v], vel[v]
-ke = [sum(map(abs, l)) for l in vel]
-pe = [sum(map(abs, l)) for l in moons]
-print sum(map(lambda t: t[0]*t[1], zip(ke, pe)))
-
+    i += 1
+    for ax in range(3):
+        if coincidences[ax]: continue
+        if [l[ax] for l in moons] == [l[ax] for l in init]:
+            if [l[ax] for l in vel] == [0 for _ in range(4)]:
+                coincidences[ax] = i
+    if None not in coincidences: break
+print reduce(lambda a,b: a*b/gcd(a,b), coincidences)
