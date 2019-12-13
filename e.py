@@ -29,9 +29,11 @@ def intcode(s):
         elif op == 2:
 	    s[pargv[2]] = reduce(O.imul, argv[:2])
         elif op == 3:
-	    s[pargv[0]] = yield
+            try: s[pargv[0]] = yield
+            except IndexError:
+                s[pargv[0]] = yield
         elif op == 4:
-	    yield argv[0]#print argv[0]
+            yield argv[0]#print argv[0]
         elif op == 5:
             if argv[0]: i = argv[1]-len(md)-1
         elif op == 6:
@@ -45,9 +47,12 @@ def intcode(s):
         else: print "PANIC"
         i+=len(md)+1
 
-def runtime(s):
+def construct(s):
     d = dd(lambda: 0, enumerate(s))
-    r = intcode(d)#s[:] + [0]*999999)   #deep copy to prevent s[] modification; [0]*999999 because of day 9
+    return intcode(d)
+
+def runtime(s):
+    r = construct(s)#s[:] + [0]*999999)   #deep copy to prevent s[] modification; [0]*999999 because of day 9
     v = r.next()    #initiates code execution
     if v: print "Warn: intcode initalisation returned %d" % v
     return r
