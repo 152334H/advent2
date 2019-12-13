@@ -1,5 +1,4 @@
-const buf = require("fs").readFileSync("i.12")
-let s = buf.toString().trim().split('\n').map(s => s.match(/[-\d]+/g).map(Number));
+let s = require('./aoc').sreadlines('i.12').map(s => s.match(/[-\d]+/g).map(Number));
 let v = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
 let T = Array(3).fill(null);
 const init = new Set()

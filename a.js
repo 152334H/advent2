@@ -1,6 +1,5 @@
 'use strict';
-const buf = require('fs').readFileSync('i.1');
-const fuels = buf.toString().trim().split('\n');
+const fuels = require('./aoc').sreadlines('i.1', Number);
 const f = m => m/3-2|0;
 const sum = (a,b) => a+b;
 function f2(m){
