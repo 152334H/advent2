@@ -50,20 +50,14 @@ function* intcode(s) {
         i += md.length+1;
     }
 }
-class DefaultMap extends Map {
-    get(k) { return super.get(k) || this.default() }
-    constructor(f) {
-	super();
-	this.default = f;
-    }
-}
 function construct(s) {
-    const d = new DefaultMap(()=>0);
+    const aoc = require('./aoc'); //strangely, this require() cannot be chained together with the next line of code
+    const d = new aoc.defaultMap(()=>0);
     [...s].forEach((v,i) => d.set(i,v));
     return intcode(d);
 }
 function runtime(s) {
-    const r = construct(s);//intcode(s.slice(0));
+    const r = construct(s);
     const v = r.next();
     //if (v) console.log(`intcode returned something (${v}) on init.`);
     return r
