@@ -1,7 +1,7 @@
 import aoc, e
 from collections import defaultdict as dd
 s = aoc.sread("i.13", int, ',')
-PLAY = 1 #change this to simulate the game
+PLAY = 0 #change this to simulate the game
 
 def safeNext(r):
     v = r.next()
