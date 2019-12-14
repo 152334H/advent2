@@ -23,15 +23,8 @@ def getFuelReq(coeff):  #wrapper call to localise extra
     return getReq('FUEL', coeff, extra)
 #part 1
 print getFuelReq(1)
-#part 2: binary search
+#part 2: exponential search
 for i in range(50): #find appropriate i to start binary search on
     if getFuelReq(1<<i) > 10**12: break
 else: "err: maxmimum i not found. Please increase the range of this for loop"
-c = 1<<i    #c is the test value for getFuelReq(c)
-sign = True #start by decreasing c
-while i:
-    i -= 1  #decrease the exponent
-    c += [1,-1][sign]*(1<<i)    #increase/reduce c
-    sign = getFuelReq(c) > 10**12
-if sign: c-=1 #if binary search ended off-by-one
-print c
+print aoc.binsearch(lambda c: getFuelReq(c) > 10**12, 1<<i)

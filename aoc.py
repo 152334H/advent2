@@ -30,3 +30,14 @@ def toGrid(d, MAP):
             s+=MAP[d[(x,y)]]
         s += '\n'
     return s
+
+def binsearch(f, ma): #thus far, only tested on `ma=2**i`
+    c = ma
+    sign = True
+    i = len(bin(ma))-2
+    while i:
+        i -= 1  #decrease the exponent
+        c += [1,-1][sign]*(1<<i)    #increase/reduce c
+        sign = f(c) #true/false -> should decrease/increase
+    if sign: c-=1 #if binary search ended off-by-one
+    return c
