@@ -13,49 +13,57 @@ function instr(n) {
 function* intcode(s) {
     let i = 0;
     let rb = 0;
-    while (s[i] !== 99) { 
-        const [op, md] = instr(s[i]);
-        const pargv = Array.from(Array(SIZE.get(op)),(_, j) => [s[i+j+1], i+j+1, s[i+j+1]+rb][md[j]]);
+    while (s.get(i) !== 99) { 
+        const [op, md] = instr(s.get(i));
+        const pargv = Array.from(Array(SIZE.get(op)),(_, j) => [s.get(i+j+1), i+j+1, s.get(i+j+1)+rb][md[j]]);
         switch (op) {
             case 1: 
-                s[pargv[2]] = s[pargv[0]] + s[pargv[1]];
+                s.set(pargv[2], s.get(pargv[0]) + s.get(pargv[1]));
                 break;
             case 2: 
-                s[pargv[2]] = s[pargv[0]] * s[pargv[1]];
+                s.set(pargv[2], s.get(pargv[0]) * s.get(pargv[1]));
                 break;
             case 3:
-                s[pargv[0]] = yield;
+                s.set(pargv[0], yield);
                 break;
             case 4:
-                yield s[pargv[0]];
+                yield s.get(pargv[0]);
                 break;
             case 5:
-                if (s[pargv[0]]) i = s[pargv[1]]-md.length-1;
+                if (s.get(pargv[0])) i = s.get(pargv[1])-md.length-1;
                 break;
             case 6:
-                if (!s[pargv[0]]) i = s[pargv[1]]-md.length-1;
+                if (!s.get(pargv[0])) i = s.get(pargv[1])-md.length-1;
                 break;
             case 7: 
-                s[pargv[2]] = s[pargv[0]] < s[pargv[1]];
+                s.set(pargv[2], s.get(pargv[0]) < s.get(pargv[1]));
                 break;
             case 8: 
-                s[pargv[2]] = s[pargv[0]] == s[pargv[1]];
+                s.set(pargv[2], s.get(pargv[0]) == s.get(pargv[1]));
+                break;
+            case 9: 
+                rb += s.get(pargv[0])
                 break;
             default:
                 console.log("???");
         }
         i += md.length+1;
     }
-} /*
+}
 class DefaultMap extends Map {
     get(k) { return super.get(k) || this.default() }
     constructor(f) {
 	super();
 	this.default = f;
     }
-}*/
+}
+function construct(s) {
+    const d = new DefaultMap(()=>0);
+    [...s].forEach((v,i) => d.set(i,v));
+    return intcode(d);
+}
 function runtime(s) {
-    const r = intcode(s.slice(0));
+    const r = construct(s);//intcode(s.slice(0));
     const v = r.next();
     //if (v) console.log(`intcode returned something (${v}) on init.`);
     return r
