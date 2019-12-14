@@ -11,7 +11,6 @@ while 1:
         ke = [sum(map(abs, l)) for l in vel]
         pe = [sum(map(abs, l)) for l in moons]
         print sum(map(lambda t: t[0]*t[1], zip(ke, pe)))
-    if i % 10000 == 0: print moons,vel
     mcp = [l[:] for l in moons]
     for a in range(len(moons)):
         for b in range(4):
