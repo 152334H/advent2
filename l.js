@@ -7,7 +7,7 @@ for (let i = 0; i < 3; i++) init.add(i+String(s.map(l => l[i])));
 
 for (let i = 0; T.includes(null); i++) {
 	if (i === 1000) {
-		const f = l => l.map(Math.abs).reduce((_,$) => $+_);
+		const f = l => l.map(Math.abs).reduce(aoc.sum);
 		const ke = v.map(f), pe = s.map(f);
 		let total = 0;
 		for (let j = 0; j < 4; j++) total += ke[j]*pe[j];

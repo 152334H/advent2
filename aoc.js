@@ -58,5 +58,7 @@ module.exports = {
     range: function(mi, ma) {
         if (ma === undefined) ma = mi, mi = 0;
         return Array.from({length: ma-mi}, (_, i) => i + mi);
-    }
+    },
+    sum: (x,y) => x+y,
+    prod: (x,y) => x*y
 }
