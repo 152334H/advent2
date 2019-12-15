@@ -54,5 +54,9 @@ module.exports = {
             c += [1,-1][+sign]*(1<<i);
         if (sign) c--;
         return c;
+    },
+    range: function(mi, ma) {
+        if (ma === undefined) ma = mi, mi = 0;
+        return Array.from({length: ma-mi}, (_, i) => i + mi);
     }
 }
