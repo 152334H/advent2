@@ -11,43 +11,42 @@ def instr(n):
         modes += (mode,)
     return (op, modes)
 DEBUG = 0
-def intcode(s):
-    rb = 0
-    i = 0
-    while s[i] != 99:
-        op, md = instr(s[i])
-	pargv = tuple([[s[i+j+1], i+j+1, s[i+j+1]+rb][md[j]] for j in range(len(md))])
-	argv = tuple([s[pargv[j]] for j in range(len(md))])
-	if DEBUG:
-		print "[%d] code: (" % i,
-		for j in range(4): print "%d," % s[i+j],
-		print ") op: %d," % op,
-		print "rb: %d," % rb,
-		print "modes: %r" % zip(md, pargv)
-        if op == 1:
-	    s[pargv[2]] = sum(argv[:2])
-        elif op == 2:
-	    s[pargv[2]] = reduce(O.imul, argv[:2])
-        elif op == 3:
-            s[pargv[0]] = yield
-        elif op == 4:
-            try: yield argv[0]#print argv[0]
-            except ValueError:
-                yield None
-                yield argv[0]
-        elif op == 5:
-            if argv[0]: i = argv[1]-len(md)-1
-        elif op == 6:
-            if not argv[0]: i = argv[1]-len(md)-1
-        elif op == 7:
-	    s[pargv[2]] = reduce(O.lt, argv[:2])
-        elif op == 8:
-	    s[pargv[2]] = reduce(O.eq, argv[:2])
-        elif op == 9:
-            rb += argv[0]
-        else: print "PANIC"
-        i+=len(md)+1
-
+def intcode(s, rb=0, i=0):
+    try: 
+        while s[i] != 99:
+            op, md = instr(s[i])
+            pargv = tuple([[s[i+j+1], i+j+1, s[i+j+1]+rb][md[j]] for j in range(len(md))])
+            argv = tuple([s[pargv[j]] for j in range(len(md))])
+            if DEBUG:
+                    print "[%d] code: (" % i,
+                    for j in range(4): print "%d," % s[i+j],
+                    print ") op: %d," % op,
+                    print "rb: %d," % rb,
+                    print "modes: %r" % zip(md, pargv)
+            if op == 1:
+                s[pargv[2]] = sum(argv[:2])
+            elif op == 2:
+                s[pargv[2]] = reduce(O.imul, argv[:2])
+            elif op == 3:
+                s[pargv[0]] = yield
+            elif op == 4:
+                try: yield argv[0]#print argv[0]
+                except ValueError:
+                    yield None
+                    yield argv[0]
+            elif op == 5:
+                if argv[0]: i = argv[1]-len(md)-1
+            elif op == 6:
+                if not argv[0]: i = argv[1]-len(md)-1
+            elif op == 7:
+                s[pargv[2]] = reduce(O.lt, argv[:2])
+            elif op == 8:
+                s[pargv[2]] = reduce(O.eq, argv[:2])
+            elif op == 9:
+                rb += argv[0]
+            else: print "PANIC"
+            i+=len(md)+1
+    except RuntimeError: yield (s, rb, i)
 def construct(s):
     d = dd(lambda: 0, enumerate(s))
     return intcode(d)
