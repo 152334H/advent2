@@ -1,5 +1,5 @@
 module.exports = {
-    sread : function (name, t=String, div) {
+    sread : function(name, t=String, div) {
         const buf = require('fs').readFileSync(name);
         let s = buf.toString().trim();
         if (div != null) s = s.split(div);
@@ -9,7 +9,7 @@ module.exports = {
         }
         return s;
     },
-    sreadlines: function (name, t=String, div) {
+    sreadlines: function(name, t=String, div) {
         let s = module.exports.sread(name, String, '\n');
         if (div != null) s = s.map(l => l.split(div));
         if (t == Number) {
@@ -18,10 +18,10 @@ module.exports = {
         }
         return s;
     },
-    toHashable: function (pos) { //ugly workaround to ensure no coordinate duplicates in grid
+    toHashable: function(pos) { //ugly workaround to ensure no coordinate duplicates in grid
         return ((pos[0]+9999)<<16)|(pos[1]+9999);
     },
-    toCoord: function (v) {
+    toCoord: function(v) {
         return [(v>>16)-9999, (v&65535)-9999];
     },
     toGrid: function(d, MAP) {
@@ -46,6 +46,13 @@ module.exports = {
         super();
         this.default = f;
         }
+    },
+    defaultdict: f => new Proxy({}, { get: (t,n) => t.hasOwnProperty(n) ? t[n] : f() }),
+    binsearch: function(f, ma) {
+        let c = ma, sign = true;
+        for (let i = ma.toString(2).length; i--; sign = f(c))
+            c += [1,-1][+sign]*(1<<i);
+        if (sign) c--;
+        return c;
     }
 }
-
