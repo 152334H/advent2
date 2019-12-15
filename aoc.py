@@ -41,3 +41,24 @@ def binsearch(f, ma): #thus far, only tested on `ma=2**i`
         sign = f(c) #true/false -> should decrease/increase
     if sign: c-=1 #if binary search ended off-by-one
     return c
+
+def adj(x,y): return [(x,y+1), (x,y-1), (x+1,y), (x-1,y)]
+
+def distance_map(start, grid, func, optional=lambda:0):
+    '''returns a dict containing a grid's (coord:manhatten-distance-to-start) pairings
+    `grid` must be a dict with (x,y) tuples as keys, and with its corresponding traversable values within `walkable`
+    `func()` is to determine if a point is legally traversable on the grid
+    `optional()` runs once for each point on the grid'''
+    from collections import defaultdict as dd
+    d = dd(lambda: 0)   #start counting distance from 0
+    border = [start] #an expanding border (coord, traversal-history) of the traversed portion of the grid.
+    for coord in border:
+        adjacent = adj(*coord)  #list of directly (taxicab) adjacent coordinates
+        for direct in range(4): #loop numerically, rather than by *adj(), to provide direction info to func()
+            adj_c = adjacent[direct]    #unnecessary variable for clarity
+            if adj_c not in d:
+                if func(adj_c, grid, direct):
+                    border.append(adj_c)   #update border
+                    d[adj_c] = d[coord]+1   #add to distance dict
+        optional() #do something after each iteration
+    return d

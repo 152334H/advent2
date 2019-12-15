@@ -51,6 +51,11 @@ def construct(s):
     d = dd(lambda: 0, enumerate(s))
     return intcode(d)
 
+def cont(t):
+    r = intcode(*t)
+    r.next()
+    return r
+
 def runtime(s):
     r = construct(s)#s[:] + [0]*999999)   #deep copy to prevent s[] modification; [0]*999999 because of day 9
     v = r.next()    #initiates code execution
