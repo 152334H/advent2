@@ -15,7 +15,7 @@ def angle(x,y):
 for cur in riods: #each calculation here is repeated unnecessarily once
     angs = set()
     for comp in riods:
-        if comp == cur: pass
+        if comp == cur: continue
         ang = angle(*comp-cur)
         if ang not in angs: #this does not find the closest '#', but it does count correctly
             angs.add(ang)
