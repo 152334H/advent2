@@ -3,17 +3,11 @@ from collections import defaultdict as dd
 s = aoc.sread("i.13", int, ',')
 PLAY = 0 #change this to simulate the game
 
-def safeNext(r):
-    v = r.next()
-    if v == None: raise ValueError
-    return v
-def push(r,v): #send, but don't get next()
-    if r.send(v) != None: r.throw(ValueError)
 def getGrid(r, grid):
     global score
     try:
         while 1:
-            x, y, v = safeNext(r), safeNext(r), safeNext(r)
+            x, y, v = e.safeNext(r), e.safeNext(r), e.safeNext(r)
             if (x,y) == (-1,0): score = v
             else: grid[(x,y)] = v
     except Exception: return grid
@@ -29,7 +23,7 @@ def predict(grid):
 s[0] = 2
 score = 0
 r = e.construct(s)
-push(r, None)
+e.push(r, None)
 while 1:
     getGrid(r, grid)
     if PLAY:
@@ -37,6 +31,6 @@ while 1:
         joy = joystick(grid)
     if not PLAY or joy == None:
         joy = predict(grid)
-    try: push(r,joy)
+    try: e.push(r,joy)
     except StopIteration: break
 print score

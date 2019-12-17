@@ -62,6 +62,14 @@ def runtime(s):
     if v: print "Warn: intcode initalisation returned %d" % v
     return r
 
+def push(r,v): #send, but don't get next()
+    if r.send(v) != None: r.throw(ValueError)
+
+def safeNext(r):
+    v = r.next()
+    if v == None: raise ValueError
+    return v
+
 def phaseinit(s, v):
     r = runtime(s)
     return r, r.send(v)
