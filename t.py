@@ -1,28 +1,37 @@
 import aoc, e
-s = aoc.sread('i.21', int, ',')
-def do(script):
-    r = e.construct(s)
-    e.getln(r)
-    r.next()
-    for l in script: e.sendl(r, l)
-    try:
-        while 1: e.getln(r),
-    except ValueError as v: print v
-#part 1
-do(['NOT C J',  #if not C...
-    'AND D J',  #and if D, then jump
-    'NOT A T',  #T=!A...
-    'OR T J',   #so if A is empty, just try to jump
-    'WALK'])    #end of program
-#part 2
-do(['OR C J',   #if J=C...
-    'AND B J',  #and B, J=true
-    'NOT J J',  #invert J to !C || !B...
-    'AND D J',  #and if D, then...
-    'OR I T',   #if T=I...
-    'AND E T',  #and E...
-    'OR H T',   #or H...
-    'AND T J',  #then jump
-    'NOT A T',  #like part 1,
-    'OR T J',   #just try to jump
-    'RUN'])
+from collections import defaultdict as dd
+s = aoc.sread('i.19', int, ',')
+grid = dd(lambda: -1)
+PART1MAGIC = 25
+PART2MAGIC = 100-1
+def query(x,y): #calls the intcode program
+    r = e.runtime(s)
+    r.send(x)
+    grid[(x,y)] = r.send(y)
+    return grid[(x,y)]
+#build initial grid
+ans1 = sum(query(_,y) for y in range(PART1MAGIC) for _ in range(PART1MAGIC))
+#get init y maxima and minima
+x = PART1MAGIC-1
+ls = [k for k in grid if k[0] == x and grid[k]]
+ymi, yma = min(ls)[1], max(ls)[1]
+ymax_d = {x:yma}
+def find_edge(start, f):
+    go = True
+    while go:
+        go = f(x,start)
+        start += 1
+    return start-1
+#do part 2
+while 1:
+    x+=1
+    yma = find_edge(yma, query)-1
+    ymi = find_edge(ymi, lambda x,y: not query(x,y))
+    if x < 50: ans1 += yma-ymi+1
+    ymax_d[x] = yma
+    
+    if x >= PART1MAGIC+PART2MAGIC:
+        if ymax_d[x-PART2MAGIC] - ymi >= PART2MAGIC:
+            break
+print ans1
+print (x-PART2MAGIC)*10000 + ymi
