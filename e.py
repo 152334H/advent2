@@ -74,6 +74,20 @@ def phaseinit(s, v):
     r = runtime(s)
     return r, r.send(v)
 
+def sendl(r, l): #sends an ASCII line to intcode, terminated with '\n'
+    for c in l: r.send(ord(c))
+    push(r, 10)
+
+def getln(r): #gets an ASCII line from intcode
+    t = ''
+    while 1:
+        v = r.next()
+        try: t+=chr(v)
+        except ValueError:
+            raise ValueError, v
+        if v == ord('\n'): break
+    return t
+
 if __name__ == "__main__":
     import aoc
     s = aoc.sread('i.5', int, ',')

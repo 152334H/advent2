@@ -29,19 +29,10 @@ r = e.construct(s)
 nlc = -1
 while nlc < yma:
     if r.next() == 10: nlc+=1
-def getln(): #gets a line from intcode
-    t = ''
-    while 1:
-        v = r.next()
-        try: t+=chr(v)
-        except ValueError:
-            print v #for part 2
-            exit()
-        if v == ord('\n'): break
-    r.next()
-    return t
 for l in ['A,B,B,C,C,A,A,B,B,C', 'L,12,R,4,R,4', 'R,12,R,4,L,12', 'R,12,R,4,L,6,L,8,L,8', 'n']:
-    getln()
-    for c in l: r.send(ord(c))
-    e.push(r, 10)
-while 1: getln()
+    e.getln(r)
+    r.next()
+    e.sendl(r, l)
+try:
+    while 1: e.getln(r)
+except ValueError as v: print v
