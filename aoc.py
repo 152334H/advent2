@@ -50,6 +50,13 @@ def adj(x,y):
     '''returns an array of the 4 (x,y) coordinates adjacent to the input coordinate'''
     return [(x,y+1), (x,y-1), (x+1,y), (x-1,y)]
 
+def diag(x,y):
+    '''clockwise'''
+    return [(x+1,y-1), (x+1,y+1), (x-1,y+1), (x-1,y-1)]
+
+def valid(p, xmi, xma, ymi, yma):
+    return p[0] >= xmi and p[0] < xma and p[1] >= ymi and p[1] < yma
+
 def back_adj(adj_c, i):
     '''given a coordinate from adj(), get back the original (x,y)'''
     return adj(*adj_c)[{0:1, 1:0, 2:3, 3:2}[i]]
