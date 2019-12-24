@@ -1,3 +1,4 @@
+from collections import defaultdict as dd
 def sread(name, t=str, div=None):
     '''read file NAME, split it with DIV and convert it to type T'''
     with open(name) as f: s = f.read()
@@ -21,8 +22,16 @@ def sreadlines(name, t=str, div=None):
             s = map(int, s)
     return s
 
-def toGrid(d, MAP):
-    '''converts a dictionary grid D to a printable representation using the value-to-char mapping MAP'''
+def makeGrid(s, xma, yma):
+    '''creates a grid of (x,y):val pairs from a sreadlines() string-list'''
+    grid = {}
+    for y in range(yma):
+        for x in range(xma):
+            grid[(x,y)] = s[y][x]
+    return grid
+def toGrid(d, MAP=type('',(object,),{'__getitem__':lambda _,v:v})()):
+    '''converts a dictionary grid D to a printable representation using the value-to-char mapping MAP
+    if MAP is not given, it is assumed that each value of D is a single char'''
     l = d.keys()
     xma, xmi = max(l)[0], min(l)[0]
     l = [t[1] for t in l]
@@ -79,3 +88,29 @@ def distance_map(start, grid, func, optional=lambda:0):
                     d[adj_c] = d[coord]+1   #add to distance dict
         optional()  #do something after each iteration
     return d
+
+import heapq
+class PQ(list):
+    def push(self, v):
+        return heapq.heappush(self, v)
+    def next(self):
+        return heapq.heappop(self)
+
+def dijkstra(nodes, edges, cond, deps=dd(lambda:dd(lambda:set())), reachable=lambda *v: True, start='@'):
+    states = set()  #keeps track of paths traversed
+    q = PQ(((0, start, set(start)),))
+    while len(q): #while condition should never break
+        moved, self, seen = q.next()
+        #verify that current path is new
+        check = frozenset(seen|set(['!'+self]))
+        if check in states: continue
+        states.add(check)
+        #break if search is finished
+        if cond(seen, nodes): break
+        #otherwise, branch out
+        for k in nodes:
+            if k in seen: continue
+            if not reachable(self, k): continue
+            if deps[self][k].issubset(seen):
+                q.push((edges[self][k]+moved, k, seen|set([k])))
+    return moved
