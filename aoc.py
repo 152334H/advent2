@@ -98,7 +98,7 @@ class PQ(list):
 
 def dijkstra(nodes, edges, cond, deps=dd(lambda:dd(lambda:set())), reachable=lambda *v: True, start='@'):
     states = set()  #keeps track of paths traversed
-    q = PQ(((0, start, set(start)),))
+    q = PQ(((0, start, set((start,))),))
     while len(q): #while condition should never break
         moved, self, seen = q.next()
         #verify that current path is new
