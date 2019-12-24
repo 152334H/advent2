@@ -21,9 +21,11 @@ print v
 from collections import defaultdict as dd
 grids = dd(lambda:dict(((x,y),'.') for y in range(5) for x in range(5)),
            {0:aoc.makeGrid(s, 5, 5)})
-def nextRecur(g):
+def nextRecur(g, peek):
     new = dd(lambda: {})
-    for d in range(min(g)-1, max(g)+2): #the grid grows by 2 layers per Recur
+    if peek: r = range(min(g), max(g)+1)
+    else: r = range(min(g)-1, max(g)+2)
+    for d in r: #the grid grows by 2 layers per Recur
         for p in g[d]:
             new[d][p] = g[d][p]
             if p == (2,2): continue
@@ -46,5 +48,5 @@ def nextRecur(g):
             if g[d][p] == '.' and around in [1,2]: new[d][p] = '#'
             elif g[d][p] == '#' and around != 1: new[d][p] = '.'
     return dd(lambda:dict(((x,y),'.') for y in range(5) for x in range(5)), new)
-for i in range(200): grids = nextRecur(grids)
+for i in range(200): grids = nextRecur(grids, i%2)
 print len([v for d in grids for v in grids[d].values() if v == '#'])
