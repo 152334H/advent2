@@ -47,6 +47,19 @@ def intcode(s, rb=0, i=0):
             else: print "PANIC"
             i+=len(md)+1
     except RuntimeError: yield (s, rb, i)
+def coredump(r):
+    import pickle as pl
+    t = r.throw(RuntimeError)
+    t = (dict(t[0]), t[1], t[2])
+    with open('runtime.bin', 'wb') as f: pl.dump(t, f)
+
+def preload():
+    import pickle as pl
+    from collections import defaultdict as dd
+    with open('runtime.bin', 'rb') as f: t = pl.load(f)
+    t = (dd(lambda:0, t[0]), t[1], t[2])
+    return e.intcode(*t)
+
 def construct(s):
     d = dd(lambda: 0, enumerate(s))
     return intcode(d)
