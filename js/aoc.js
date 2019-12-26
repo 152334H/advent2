@@ -1,6 +1,6 @@
 module.exports = {
     sread : function(name, t=String, div) {
-        const buf = require('fs').readFileSync(name);
+        const buf = require('fs').readFileSync('../input/'+name);
         let s = buf.toString().trim();
         if (div != null) s = s.split(div);
         if (t === Number) {
@@ -60,5 +60,7 @@ module.exports = {
         return Array.from({length: ma-mi}, (_, i) => i + mi);
     },
     sum: (x,y) => x+y,
-    prod: (x,y) => x*y
+    prod: (x,y) => x*y,
+    islower: s => /^[a-z]*$/.test(s),
+    isupper: s => /^[A-Z]*$/.test(s)
 }

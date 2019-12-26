@@ -13,36 +13,36 @@ function instr(n) {
 function* intcode(s) {
     let i = 0;
     let rb = 0;
-    while (s.get(i) !== 99) { 
-        const [op, md] = instr(s.get(i));
-        const pargv = Array.from(Array(SIZE.get(op)),(_, j) => [s.get(i+j+1), i+j+1, s.get(i+j+1)+rb][md[j]]);
+    while (s[i] !== 99) { 
+        const [op, md] = instr(s[i]);
+        const pargv = Array.from(Array(SIZE.get(op)),(_, j) => [s[i+j+1], i+j+1, s[i+j+1]+rb][md[j]]);
         switch (op) {
             case 1: 
-                s.set(pargv[2], s.get(pargv[0]) + s.get(pargv[1]));
+                s[pargv[2]] = s[pargv[0]] + s[pargv[1]];
                 break;
             case 2: 
-                s.set(pargv[2], s.get(pargv[0]) * s.get(pargv[1]));
+                s[pargv[2]] = s[pargv[0]] * s[pargv[1]];
                 break;
             case 3:
-                s.set(pargv[0], yield);
+                s[pargv[0]] = yield;
                 break;
             case 4:
-                yield s.get(pargv[0]);
+                yield s[pargv[0]];
                 break;
             case 5:
-                if (s.get(pargv[0])) i = s.get(pargv[1])-md.length-1;
+                if (s[pargv[0]]) i = s[pargv[1]]-md.length-1;
                 break;
             case 6:
-                if (!s.get(pargv[0])) i = s.get(pargv[1])-md.length-1;
+                if (!s[pargv[0]]) i = s[pargv[1]]-md.length-1;
                 break;
             case 7: 
-                s.set(pargv[2], s.get(pargv[0]) < s.get(pargv[1]));
+                s[pargv[2]] = s[pargv[0]] < s[pargv[1]];
                 break;
             case 8: 
-                s.set(pargv[2], s.get(pargv[0]) == s.get(pargv[1]));
+                s[pargv[2]] = s[pargv[0]] == s[pargv[1]];
                 break;
             case 9: 
-                rb += s.get(pargv[0])
+                rb += s[pargv[0]];
                 break;
             default:
                 console.log("???");
@@ -50,11 +50,16 @@ function* intcode(s) {
         i += md.length+1;
     }
 }
-function construct(s) {
+function init(s) {
     const aoc = require('./aoc'); //strangely, this require() cannot be chained together with the next line of code
-    const d = new aoc.defaultMap(()=>0);
-    [...s].forEach((v,i) => d.set(i,v));
-    return intcode(d);
+    const d = aoc.defaultdict(()=>0);
+    [...s].forEach((v,i) => d[i] = v);
+    //const d = new aoc.defaultMap(()=>0);
+    //[...s].forEach((v,i) => d.set(i,v));
+    return [intcode(d), d];
+}
+function construct(s) {
+    return init(s)[0];
 }
 function runtime(s) {
     const r = construct(s);
@@ -68,6 +73,8 @@ function phaseInit(s, v) {
 }
 module.exports.intcode = intcode;
 module.exports.runtime = runtime;
+module.exports.construct = construct;
+module.exports.init = init;
 if (require.main === module) {
     const s = require('./aoc').sread('i.5', Number, ',');
     let ans = 0;
