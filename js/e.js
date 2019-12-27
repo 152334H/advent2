@@ -16,6 +16,8 @@ function* intcode(s) {
     while (s[i] !== 99) { 
         const [op, md] = instr(s[i]);
         const pargv = Array.from(Array(SIZE.get(op)),(_, j) => [s[i+j+1], i+j+1, s[i+j+1]+rb][md[j]]);
+        /*console.log(pargv, pargv.map(v=>s[v]))
+        console.log(`[${i}] code: ( ${s[i+0]}, ${s[i+1]}, ${s[i+2]}, ${s[i+3]}, ) op: ${op}, modes: ${md}`);*/
         switch (op) {
             case 1: 
                 s[pargv[2]] = s[pargv[0]] + s[pargv[1]];
@@ -74,6 +76,7 @@ function phaseInit(s, v) {
 module.exports.intcode = intcode;
 module.exports.runtime = runtime;
 module.exports.construct = construct;
+module.exports.phaseInit = phaseInit;
 module.exports.init = init;
 if (require.main === module) {
     const s = require('./aoc').sread('i.5', Number, ',');

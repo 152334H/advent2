@@ -59,8 +59,24 @@ module.exports = {
         if (ma === undefined) ma = mi, mi = 0;
         return Array.from({length: ma-mi}, (_, i) => i + mi);
     },
+    permute: function(arr) {
+        //only 1 yield from permute() should be used at a time
+        const tmp = arr.slice(0);
+        return _permutations(tmp, 0);
+    },
+    max: (a,b) => a < b ? b : a,
+    min: (a,b) => a > b ? b : a,
     sum: (x,y) => x+y,
     prod: (x,y) => x*y,
     islower: s => /^[a-z]*$/.test(s),
-    isupper: s => /^[A-Z]*$/.test(s)
+    isupper: s => /^[A-Z]*$/.test(s),
+}
+function* _permutations(arr, i) {
+    if (arr.length === i) yield arr;
+    else
+        for (let j = i; j < arr.length; j++) {
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+            yield* _permutations(arr, i+1);
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
 }
